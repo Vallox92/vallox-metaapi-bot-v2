@@ -18,7 +18,7 @@ app.post("/", async (req, res) => {
   const { symbol, action } = req.body;
 
   try {
-    console.log(🔔 Señal recibida: ${action} en ${symbol});
+   console.log(Senal recibida: ${action} en ${symbol});
 
     const api = new MetaApi(token);
     const account = await api.metatraderAccountApi.getAccount(accountId);
