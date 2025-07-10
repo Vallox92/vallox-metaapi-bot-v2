@@ -22,7 +22,8 @@ app.post('/webhook', async (req, res) => {
     console.log(`✅ Señal recibida: ${type.toUpperCase()} en ${symbol}`);
 
     const account = await api.metatraderAccountApi.getAccount(accountId);
-    const connection = await account.getAccountConnection();
+    const connection = await account.getStreamingConnection();
+
     await connection.connect();
 
     const order = {
