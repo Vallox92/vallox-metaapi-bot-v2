@@ -23,12 +23,14 @@ app.post("/", async (req, res) => {
     console.log(`📩 Señal recibida: ${action}`);
     
     const api = new MetaApi(token);
-    const account = await api.metatraderAccountApi.getAccount(accountId);
-    await account.deploy();
-    await account.waitConnected();
-    const connection = await account.getRPCConnection();
-    await connection.connect();
-    await connection.waitSynchronized();
+const account = await api.metatraderAccountApi.getAccount(accountId);
+await account.deploy();
+await account.waitConnected();
+
+const connection = await account.getStreamingConnection();
+await connection.connect();
+await connection.waitSynchronized();
+
 
 
     const order = {
