@@ -26,9 +26,10 @@ app.post("/", async (req, res) => {
     const account = await api.metatraderAccountApi.getAccount(accountId);
     await account.deploy();
     await account.waitConnected();
-    const connection = account.getStreamingConnection();
+    const connection = await account.getRPCConnection();
     await connection.connect();
     await connection.waitSynchronized();
+
 
     const order = {
       symbol,
