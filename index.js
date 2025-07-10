@@ -19,35 +19,36 @@ app.post("/", async (req, res) => {
   const action = type;
 
   try {
-    console.log(`📩 Señal recibida: ${action}`);
+  console.log(`📩 Señal recibida: ${action}`);
 
-    const api = new MetaApi(token);
-    const account = await api.metatraderAccountApi.getAccount(accountId);
+  const api = new MetaApi(token);
+  const account = await api.metatraderAccountApi.getAccount(accountId);
 
-    await account.deploy();
-    await account.waitConnected();
+  await account.waitDeployed(); // Asegúrate que está desplegada
+  await account.waitConnected();
 
-    const connection = account.getConnection();
-    await connection.connect();
-    await connection.waitSynchronized();
+  const connection = account.getStreamingConnection(); // ✅ Método correcto
+  await connection.connect();
+  await connection.waitSynchronized();
 
-    const order = {
-      symbol,
-      type: action === "buy" ? "ORDER_TYPE_BUY" : "ORDER_TYPE_SELL",
-      volume: loteaje,
-      stopLoss: sl,
-      takeProfit: tp,
-      comment: "Bot Vallox"
-    };
+  const order = {
+    symbol,
+    type: action === "buy" ? "ORDER_TYPE_BUY" : "ORDER_TYPE_SELL",
+    volume: loteaje,
+    stopLoss: sl,
+    takeProfit: tp,
+    comment: "Bot Vallox"
+  };
 
-    const result = await connection.createMarketOrder(order);
-    console.log("✅ Orden ejecutada:", result);
-    res.status(200).send("Orden ejecutada con éxito");
+  await connection.createMarketOrder(symbol, order.type, order);
+  console.log("✅ Orden ejecutada correctamente");
 
-  } catch (error) {
-    console.error("❌ Error ejecutando orden:", error);
-    res.status(500).send("Error al ejecutar la orden");
-  }
+  res.status(200).send("Orden ejecutada");
+} catch (err) {
+  console.error("❌ Error ejecutando orden:", err);
+  res.status(500).send("Error ejecutando orden");
+}
+
 });
 
 app.listen(port, () => {
