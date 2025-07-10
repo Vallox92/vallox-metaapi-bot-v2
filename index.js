@@ -14,17 +14,18 @@ const tp = 1000; // 100 pips
 
 app.use(bodyParser.json());
 
+
 app.post("/", async (req, res) => {
-  const { symbol, action } = req.body;
+  const { symbol, type } = req.body;
+  const action = type;
 
   try {
-    console.log(`📩 Señal recibida: ${action} en ${symbol}`);
-
+    console.log(`📩 Señal recibida: ${action}`);
+    
     const api = new MetaApi(token);
     const account = await api.metatraderAccountApi.getAccount(accountId);
     await account.deploy();
     await account.waitConnected();
-
     const connection = account.getStreamingConnection();
     await connection.connect();
     await connection.waitSynchronized();
