@@ -24,14 +24,15 @@ app.post("/", async (req, res) => {
     
   const api = new MetaApi(token);
 const account = await api.metatraderAccountApi.getAccount(accountId);
+
 await account.deploy();
 await account.waitConnected();
 
-// ✅ Nueva forma de obtener la conexión
-const connection = api.metatraderAccountApi.getRPCConnection(accountId);
-
+// ✅ Método correcto ahora
+const connection = await account.getRPCConnection();
 await connection.connect();
 await connection.waitSynchronized();
+
 
 
 
