@@ -8,15 +8,14 @@ const token = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJmZTU0Nzc4OTExMjY1
 const accountId = "8daf60a4-0f16-4fdc-a34c-d9e9cb5f6ca3";
 
 const loteaje = 0.01;
-const sl = 500;    // 50 pips
-const tp = 1000;   // 100 pips
+const sl = 500;
+const tp = 1000;
 
 app.use(express.json());
 
 app.post("/", async (req, res) => {
-  const { symbol, action } = req.body;
-
   try {
+    const { symbol, action } = req.body;
     console.log(`📩 Señal recibida: ${action}`);
 
     const api = new MetaApi(token);
@@ -25,11 +24,7 @@ app.post("/", async (req, res) => {
     await account.deploy();
     await account.waitConnected();
 
-    // ✅ Esta es la forma correcta ahora:
-    const connection = account.getStreamingConnection();
-
-    await connection.connect();
-    await connection.waitSynchronized();
+    const connection = await account.connect(); // ✅ Este es el correcto
 
     const order = {
       symbol,
@@ -43,9 +38,8 @@ app.post("/", async (req, res) => {
     await connection.createMarketOrder(order);
     console.log("✅ Orden ejecutada correctamente");
     res.status(200).send("Orden ejecutada");
-
   } catch (err) {
-    console.error("❌ Error ejecutando orden:", err.message);
+    console.error("❌ Error ejecutando orden:", err);
     res.status(500).send("Error ejecutando orden");
   }
 });
