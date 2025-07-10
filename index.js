@@ -1,5 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const MetaApi = require("metaapi.cloud-sdk").default;
 
 const app = express();
@@ -9,10 +8,11 @@ const token = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJmZTU0Nzc4OTExMjY1
 const accountId = "8daf60a4-0f16-4fdc-a34c-d9e9cb5f6ca3";
 
 const loteaje = 0.01;
-const sl = 500;   // 50 pips
-const tp = 1000;  // 100 pips
+const sl = 500;
+const tp = 1000;
 
-app.use(bodyParser.json());
+app.use(express.json()); // ✅ Esto permite recibir datos del webhook
+
 
 app.post("/", async (req, res) => {
   const { symbol, type } = req.body;
