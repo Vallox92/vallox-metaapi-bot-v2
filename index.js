@@ -23,15 +23,27 @@ app.post("/", async (req, res) => {
     console.log(`📩 Señal recibida: ${action}`);
     
   const api = new MetaApi(token);
-const account = await api.metatraderAccountApi.getAccount(accountId);
 
-await account.deploy();
+// Asegura que account sea un objeto válido con acceso RPC
+const account = await api.metatraderAccountApi.getAccount(accountId);
 await account.waitConnected();
 
-// ✅ Método correcto ahora
-const connection = await account.getRPCConnection();
+const connection = account.getRPCConnection();
 await connection.connect();
 await connection.waitSynchronized();
+
+const order = {
+  symbol,
+  type: action === "buy" ? "ORDER_TYPE_BUY" : "ORDER_TYPE_SELL",
+  volume: loteaje,
+  stopLoss: sl,
+  takeProfit: tp,
+  comment: "Bot Vallox"
+};
+
+await connection.createMarketOrder(order);
+console.log('✅ Orden ejecutada correctamente');
+
 
 
 
