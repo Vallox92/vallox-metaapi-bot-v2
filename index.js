@@ -21,21 +21,21 @@ app.post('/webhook', async (req, res) => {
 
     console.log(`✅ Señal recibida: ${type.toUpperCase()} en ${symbol}`);
 
-    const account = await api.metatraderAccountApi.getAccount(accountId);
-    const connection = await account.getStreamingConnection();
+ const connection = await account.getStreamingConnection();
+await connection.connect();
 
-    await connection.connect();
+const trade = {
+  symbol,
+  type: type.toLowerCase(),
+  volume: 0.01,
+  stopLoss: 500,
+  takeProfit: 1000
+};
 
-    const order = {
-      symbol,
-      type: type.toLowerCase(), // "buy" o "sell"
-      volume: 0.01,
-      stopLoss: 50,
-      takeProfit: 100
-    };
+const result = await connection.createMarketOrder(trade);
+console.log('✅ Orden ejecutada correctamente:', result);
+res.send('✅ Orden ejecutada');
 
-    const result = await connection.createMarketOrder(order);
-    console.log('✅ Orden ejecutada correctamente:', result);
 
     res.status(200).send('Orden ejecutada correctamente');
   } catch (err) {
