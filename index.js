@@ -27,7 +27,7 @@ app.post('/webhook', async (req, res) => {
       await account.waitConnected();
     }
 
-    const connection = await account.getAccountConnection();
+    const connection = await account.getStreamingConnection();
     await connection.connect();
 
     await connection.createMarketOrder(symbol, type, 0.01, {
