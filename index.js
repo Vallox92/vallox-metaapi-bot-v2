@@ -24,13 +24,15 @@ app.post('/webhook', async (req, res) => {
  const connection = await account.getStreamingConnection();
 await connection.connect();
 
-const trade = {
-  symbol,
-  type: type.toLowerCase(),
-  volume: 0.01,
-  stopLoss: 500,
-  takeProfit: 1000
-};
+// Espera hasta que la cuenta esté conectada
+await account.waitConnected();
+
+// Ejecuta orden
+await connection.createMarketOrder(symbol, type.toLowerCase(), 0.01, {
+  stopLoss: 50,
+  takeProfit: 100
+});
+
 
 const result = await connection.createMarketOrder(trade);
 console.log('✅ Orden ejecutada correctamente:', result);
