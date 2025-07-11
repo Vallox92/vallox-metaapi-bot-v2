@@ -22,7 +22,7 @@ app.post('/webhook', async (req, res) => {
     console.log('⏳ Esperando conexión a MetaApi...');
   const account = await api.metatraderAccountApi.getAccount(accountId);
 console.log('⌛ Esperando conexión a MetaApi...');
-const connection = await api.connect(accountId); // ← ESTA ES LA BUENA
+const connection = await account.connect(); // ✅ CORRECTA
 await connection.waitSynchronized();
 
 
