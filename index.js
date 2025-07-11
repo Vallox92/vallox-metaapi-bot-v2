@@ -20,22 +20,21 @@ app.post('/webhook', async (req, res) => {
     res.status(200).send('Señal recibida');
 
     console.log('⏳ Esperando conexión a MetaApi...');
-    const account = await api.metatraderAccountApi.getAccount(accountId);
-    const connection = account.getStreamingConnection();
+  const account = await api.metatraderAccountApi.getAccount(accountId);
+const connection = await account.getAccountConnection();
+await connection.waitConnected();
 
-    await connection.connect();
-    await connection.waitSynchronized();
+console.log('📶 Conexión lista. Enviando orden...');
 
-    console.log('📡 Conexión lista. Enviando orden...');
+const lotaje = 0.01;
+const SL = 50; // pips
+const TP = 100; // pips
 
-    const lotaje = 0.01;
-    const SL = 50; // pips
-    const TP = 100; // pips
+await connection.createMarketOrder(symbol, type, lotaje, {
+  stopLoss: SL,
+  takeProfit: TP
+});
 
-    await connection.createMarketOrder(symbol, type, lotaje, {
-      stopLoss: SL,
-      takeProfit: TP
-    });
 
     console.log('✅ Orden enviada con éxito');
 
